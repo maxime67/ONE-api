@@ -14,7 +14,7 @@ const validate = (req, res, next) => {
 
 /**
  * @route   GET /api/cves
- * @desc    Récupérer tous les CVE avec pagination
+ * @desc    Récupérer toutes les CVE avec pagination
  * @access  Public
  */
 router.get('/', [
@@ -23,6 +23,13 @@ router.get('/', [
     query('sortBy').optional().isString().withMessage('Le champ de tri doit être une chaîne de caractères'),
     query('sortOrder').optional().isIn(['asc', 'desc']).withMessage('L\'ordre de tri doit être "asc" ou "desc"')
 ], validate, cveController.getAllCVEs);
+
+/**
+ * @route   GET /api/cves/CVE-2025-1036
+ * @desc    Récupérer la CVE avec l'identifiant fournis
+ * @access  Public
+ */
+router.get('/:cveId', validate, cveController.getCVEById);
 
 /**
  * @route   GET /api/cves/search

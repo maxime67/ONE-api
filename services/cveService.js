@@ -36,7 +36,7 @@ class CVEService {
      * Récupère un CVE par son ID
      */
     async getCVEById(cveId) {
-        return await CVE.findOne({ cveId })
+        return CVE.findOne({cveId: cveId})
             .populate({
                 path: 'affectedProducts.product',
                 select: 'name vendorName versions'

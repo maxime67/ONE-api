@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Create a schema for CVE records
-const cveSchema = new mongoose.Schema({
+const cveModel = new mongoose.Schema({
     cveId: {
         type: String,
         required: true,
@@ -68,16 +68,16 @@ const cveSchema = new mongoose.Schema({
 });
 
 // Create indexes for efficient querying
-cveSchema.index({ 'affectedProducts.product': 1 });
-cveSchema.index({ 'affectedProducts.vendor': 1 });
-cveSchema.index({ 'affectedProducts.productName': 1 });
-cveSchema.index({ 'affectedProducts.vendorName': 1 });
-cveSchema.index({ 'problemType.cweId': 1 });
-cveSchema.index({ cvssScore: 1 });
-cveSchema.index({ publishedDate: 1 });
+cveModel.index({ 'affectedProducts.product': 1 });
+cveModel.index({ 'affectedProducts.vendor': 1 });
+cveModel.index({ 'affectedProducts.productName': 1 });
+cveModel.index({ 'affectedProducts.vendorName': 1 });
+cveModel.index({ 'problemType.cweId': 1 });
+cveModel.index({ cvssScore: 1 });
+cveModel.index({ publishedDate: 1 });
 
 // Method to extract fields from raw data
-cveSchema.statics.fromRawData = function(rawData, sourceFile) {
+cveModel.statics.fromRawData = function(rawData, sourceFile) {
     try {
         let cveData = {
             cveId: rawData.CVE_data_meta?.ID || '',
@@ -184,6 +184,6 @@ cveSchema.statics.fromRawData = function(rawData, sourceFile) {
     }
 };
 
-const CVE = mongoose.model('CVE', cveSchema);
+const CVE = mongoose.model('CVE', cveModel);
 
 module.exports = CVE;

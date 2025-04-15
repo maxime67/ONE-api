@@ -11,6 +11,16 @@ const validate = (req, res, next) => {
     }
     next();
 };
+/**
+ * @route   GET /api/products/search
+ * @desc    Rechercher des produits par texte
+ * @access  Public
+ */
+router.get('/search', [
+    query('q').isString().withMessage('Le terme de recherche doit être une chaîne de caractères'),
+    query('page').optional().isInt({ min: 1 }).withMessage('La page doit être un entier positif'),
+    query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('La limite doit être un entier entre 1 et 100')
+], productController.searchProducts);
 
 /**
  * @route   GET /api/products
@@ -43,16 +53,7 @@ router.get('/vendor/:vendorId/name/:productName', [
     param('productName').isString().withMessage('Le nom du produit doit être une chaîne de caractères')
 ], validate, productController.getProductByNameAndVendor);
 
-/**
- * @route   GET /api/products/search
- * @desc    Rechercher des produits par texte
- * @access  Public
- */
-router.get('/search', [
-    query('q').isString().withMessage('Le terme de recherche doit être une chaîne de caractères'),
-    query('page').optional().isInt({ min: 1 }).withMessage('La page doit être un entier positif'),
-    query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('La limite doit être un entier entre 1 et 100')
-], validate, productController.searchProducts);
+
 
 /**
  * @route   GET /api/products/:id/cves
