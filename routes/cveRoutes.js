@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cveController = require('../controllers/cveController');
 const { param, query, validationResult } = require('express-validator');
+const {authenticateToken} = require("../middlewares/authMiddleware");
 
 // Middleware de validation des paramètres
 const validate = (req, res, next) => {
@@ -29,7 +30,7 @@ router.get('/', [
  * @desc    Récupérer la CVE avec l'identifiant fournis
  * @access  Public
  */
-router.get('/:cveId', validate, cveController.getCVEById);
+router.get('/:cveId', validate,authenticateToken, cveController.getCVEById);
 
 /**
  * @route   GET /api/cves/search
