@@ -25,7 +25,7 @@ app.use(express.json()); // Parse JSON bodies
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 30000, // 30 secondes au lieu de 10
+  serverSelectionTimeoutMS: 30000,
   connectTimeoutMS: 30000,
   socketTimeoutMS: 30000
 })
