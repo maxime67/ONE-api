@@ -156,7 +156,9 @@ class ProductService {
 
         // Trouver tous les CVE associés à ce produit
         const cves = await CVE.find({ 'affectedProducts.product': productId })
-            .select('cvssScore publishedDate');
+            .select('cveId cvssScore publishedDate');
+
+        console.log(cves.length)
 
         // Analyser la distribution de sévérité
         const severityDistribution = {
@@ -168,6 +170,7 @@ class ProductService {
         };
 
         cves.forEach(cve => {
+            console.log(cve.cveId)
             if (!cve.cvssScore) {
                 severityDistribution.NONE++;
             } else if (cve.cvssScore >= 9.0) {
