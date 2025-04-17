@@ -24,11 +24,26 @@ app.use(express.json()); // Parse JSON bodies
 // Database connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // 30 secondes au lieu de 10
+  connectTimeoutMS: 30000,
+  socketTimeoutMS: 30000
 })
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
-
+    .catch(err => {
+      console.error('MongoDB connection error details:', {
+        name: err.name,
+        message: err.message,
+        code: err.code
+      });
+      console.error('Stack trace:', err.stack);
+    });
+const db = mongoose.connection;
+db.on('connecting', () => console.log('Connecting to MongoDB...'));
+db.on('connected', () => console.log('MongoDB connected'));
+db.on('disconnecting', () => console.log('Disconnecting from MongoDB...'));
+db.on('disconnected', () => console.log('MongoDB disconnected'));
+db.on('error', (err) => console.error('MongoDB connection error:', err));
 // Routes
 app.use('/api/cves', cveRoutes);
 app.use('/api/vendors', vendorRoutes);
