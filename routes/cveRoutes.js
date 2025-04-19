@@ -30,7 +30,7 @@ router.get('/', [
  * @desc    Récupérer la CVE avec l'identifiant fournis
  * @access  Public
  */
-router.get('/:cveId', validate,authenticateToken, cveController.getCVEById);
+router.get('/:cveId', validate, cveController.getCVEById);
 
 /**
  * @route   GET /api/cves/search
