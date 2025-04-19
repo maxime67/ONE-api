@@ -1,7 +1,6 @@
 const CVE = require('../models/cveModel');
 const Product = require('../models/productModel');
 const Vendor = require('../models/vendorModel');
-const mongoose = require("mongoose");
 
 /**
  * Service pour gérer les opérations sur les CVE
@@ -15,8 +14,8 @@ class CVEService {
         const sort = {};
         sort[sortBy] = sortOrder;
 
-        const total = await mongoose.model('CVE').countDocuments();
-        const cves = await mongoose.model('CVE').find()
+        const total = await CVE.countDocuments();
+        const cves = await CVE.find()
             .sort(sort)
             .skip(skip)
             .limit(limit)
@@ -37,7 +36,7 @@ class CVEService {
      * Récupère un CVE par son ID
      */
     async getCVEById(cveId) {
-        return mongoose.model('CVE').findOne({cveId: cveId})
+        return CVE.findOne({cveId: cveId})
             .populate({
                 path: 'affectedProducts.product',
                 select: 'name vendorName versions'
@@ -72,8 +71,8 @@ class CVEService {
                 }
         }
 
-        const total = await mongoose.model('CVE').countDocuments(query);
-        const cves = await mongoose.model('CVE').find(query)
+        const total = await CVE.countDocuments(query);
+        const cves = await CVE.find(query)
             .sort({ cvssScore: -1, publishedDate: -1 })
             .skip(skip)
             .limit(limit)
@@ -97,7 +96,7 @@ class CVEService {
         const skip = (page - 1) * limit;
         const query = { 'affectedProducts.product': productId };
 
-        const total = await mongoose.model('CVE').countDocuments(query);
+        const total = await CVE.countDocuments(query);
         const cves = await CVE.find(query)
             .sort({ publishedDate: -1 })
             .skip(skip)
@@ -122,8 +121,8 @@ class CVEService {
         const skip = (page - 1) * limit;
         const query = { 'affectedProducts.vendor': vendorId };
 
-        const total = await mongoose.model('CVE').countDocuments(query);
-        const cves = await mongoose.model('CVE').find(query)
+        const total = await CVE.countDocuments(query);
+        const cves = await CVE.find(query)
             .sort({ publishedDate: -1 })
             .skip(skip)
             .limit(limit)
@@ -152,8 +151,8 @@ class CVEService {
             ]
         };
 
-        const total = await mongoose.model('CVE').countDocuments(query);
-        const cves = await mongoose.model('CVE').find(query)
+        const total = await CVE.countDocuments(query);
+        const cves = await CVE.find(query)
             .sort({ publishedDate: -1 })
             .skip(skip)
             .limit(limit)
@@ -174,9 +173,9 @@ class CVEService {
      * Obtient les statistiques sur les CVE
      */
     async getCVEStats() {
-        const totalCVEs = await mongoose.model('CVE').countDocuments();
+        const totalCVEs = await CVE.countDocuments();
 
-        const severityCounts = await mongoose.model('CVE').aggregate([
+        const severityCounts = await CVE.aggregate([
             {
                 $match: { cvssScore: { $exists: true, $ne: null } }
             },
@@ -198,7 +197,7 @@ class CVEService {
             }
         ]);
 
-        const recentCVEs = await mongoose.model('CVE').countDocuments({
+        const recentCVEs = await CVE.countDocuments({
             publishedDate: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
         });
 
@@ -246,7 +245,7 @@ class CVEService {
                 break;
         }
 
-        const timeline = await mongoose.model('CVE').aggregate([
+        const timeline = await CVE.aggregate([
             {
                 $match: {
                     publishedDate: { $exists: true, $ne: null }
