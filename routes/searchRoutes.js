@@ -5,10 +5,13 @@ const { query, validationResult } = require('express-validator');
 
 // Middleware de validation des paramètres
 const validate = (req, res, next) => {
+    // Fonction principale qui applique les tests définies dans les définitions de routes
     const errors = validationResult(req);
+    // Rend une http 400 en cas de données invalide
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+    // Next permet au code suivant de s'executer
     next();
 };
 
@@ -29,9 +32,16 @@ router.get('/', [
  * @access  Public
  */
 router.post('/advanced', [
+    // Vérification des données reçues
     query('page').optional().isInt({ min: 1 }).withMessage('La page doit être un entier positif'),
     query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('La limite doit être un entier entre 1 et 100')
-], validate, searchController.advancedSearch);
+],
+    // On utilise un middleware afin de faire valider nos paramètres reçus
+    validate,
+    // On appel notre controller et on utilise la méthode que l'on souhaite associer à notre route
+    searchController.advancedSearch);
+
+
 
 /**
  * @route   GET /api/search/suggestions

@@ -74,24 +74,17 @@ class SearchService {
         const query = {};
 
         // Filtrer par ID CVE
-        if (filters.cveId) {
-            query.cveId = { $regex: filters.cveId, $options: 'i' };
-        }
+        if (filters.cveId) query.cveId = { $regex: filters.cveId, $options: 'i' };
+
 
         // Filtrer par description
-        if (filters.description) {
-            query.description = { $regex: filters.description, $options: 'i' };
-        }
+        if (filters.description) query.description = { $regex: filters.description, $options: 'i' };
 
         // Filtrer par vendeur
-        if (filters.vendor) {
-            query['affectedProducts.vendorName'] = { $regex: filters.vendor, $options: 'i' };
-        }
+        if (filters.vendor) query['affectedProducts.vendorName'] = { $regex: filters.vendor, $options: 'i' };
 
         // Filtrer par produit
-        if (filters.product) {
-            query['affectedProducts.productName'] = { $regex: filters.product, $options: 'i' };
-        }
+        if (filters.product) query['affectedProducts.productName'] = { $regex: filters.product, $options: 'i' };
 
         // Filtrer par niveau de sévérité
         if (filters.severity) {
@@ -112,29 +105,19 @@ class SearchService {
         }
 
         // Filtrer par score CVSS minimum
-        if (filters.minCvss) {
-            query.cvssScore = { ...query.cvssScore, $gte: parseFloat(filters.minCvss) };
-        }
+        if (filters.minCvss) query.cvssScore = { ...query.cvssScore, $gte: parseFloat(filters.minCvss) };
 
         // Filtrer par score CVSS maximum
-        if (filters.maxCvss) {
-            query.cvssScore = { ...query.cvssScore, $lte: parseFloat(filters.maxCvss) };
-        }
+        if (filters.maxCvss) query.cvssScore = { ...query.cvssScore, $lte: parseFloat(filters.maxCvss) };
 
         // Filtrer par date de publication (début)
-        if (filters.startDate) {
-            query.publishedDate = { $gte: new Date(filters.startDate) };
-        }
+        if (filters.startDate) query.publishedDate = { $gte: new Date(filters.startDate) };
 
         // Filtrer par date de publication (fin)
-        if (filters.endDate) {
-            query.publishedDate = { ...query.publishedDate, $lte: new Date(filters.endDate) };
-        }
+        if (filters.endDate) query.publishedDate = { ...query.publishedDate, $lte: new Date(filters.endDate) };
 
         // Filtrer par CWE ID
-        if (filters.cweId) {
-            query['problemType.cweId'] = { $regex: filters.cweId, $options: 'i' };
-        }
+        if (filters.cweId) query['problemType.cweId'] = { $regex: filters.cweId, $options: 'i' };
 
         const total = await CVE.countDocuments(query);
         const cves = await CVE.find(query)
