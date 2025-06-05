@@ -138,6 +138,48 @@ class SearchService {
     }
 
     /**
+     * Recherche avancée de CVE avec filtres multiples
+     */
+    async advancedSearch(filters, page = 1, limit = 20) {
+        const skip = (page - 1) * limit;
+        // On initialize une variable query qui va contenir nos filtres passer à l'ORM
+        const query = {};
+
+        // Filtrer par score CVSS minimum
+        if (filters.minCvss) query.cvssScore = { ...query.cvssScore, $gte: parseFloat(filters.minCvss) };
+
+        // Filtrer par score CVSS maximum
+        if (filters.maxCvss) query.cvssScore = { ...query.cvssScore, $lte: parseFloat(filters.maxCvss) };
+
+        // Pour la pgination on récupère le nombre d'élements retournés
+        const total = await CVE.countDocuments(query);
+
+        // La méthode find de mongoose permet d'effectuer des reuqêtes vers notre base de données
+        // Await permet d'attendre le résultat avant d'effectuer les actions suivantes,
+        // ce mecanisme permet de récupérer nos objets CVE plutot qu'un objet Promise javascript
+        const cves = await CVE.find(query)
+            // On ajoute un trie par date de publication les plus récentes
+            .sort({ publishedDate: -1 })
+            // En fonction de la variable page, on ne récupère pas les éléments qui précède la page recherchée
+            .skip(skip)
+            // On ne recupère que les éléments de la page souhaitée
+            .limit(limit)
+            // On ne récupère que les élements souhaitées de nos objets CVE
+            .select('-raw_data');
+
+        // Retour contenant notre page de CVE
+        return {
+            cves,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        };
+    }
+
+    /**
      * Suggère des termes pour l'autocomplétion
      */
     async getSuggestions(prefix, type = 'all', limit = 10) {
